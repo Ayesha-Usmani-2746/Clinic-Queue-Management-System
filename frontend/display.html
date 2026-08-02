@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediCare — Live Display</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/display.css"/>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <div class="display-header">
+    <div class="header-center">
+      <h1 class="clinic-name">🏥 MediCare Clinic</h1>
+      <p class="clinic-sub">Digital Queue Management System</p>
+    </div>
+    <div class="live-pill">
+      <span class="live-dot" id="liveDot"></span> LIVE
+    </div>
+  </div>
+
+  <!-- ── VOICE ENABLE BAR — must be clicked once for Chrome audio ── -->
+  <div id="voiceEnableWrap" style="
+    text-align:center; padding:10px;
+    background: rgba(14,165,233,0.12);
+    border-bottom: 1px solid rgba(14,165,233,0.2);
+  ">
+    <button id="voiceEnableBtn" onclick="enableVoice()" style="
+      background:#0ea5e9; color:#fff; border:none;
+      padding:10px 28px; border-radius:22px;
+      font-size:14px; font-weight:700; cursor:pointer;
+      font-family:'Inter',sans-serif;
+      box-shadow:0 2px 12px rgba(14,165,233,.4);
+      margin-right:12px;
+    ">🔊 Enable Voice Announcements</button>
+    <button onclick="testVoice()" style="
+      background:rgba(255,255,255,0.1); color:#94a3b8; border:1px solid rgba(255,255,255,0.15);
+      padding:10px 20px; border-radius:22px;
+      font-size:13px; font-weight:600; cursor:pointer;
+      font-family:'Inter',sans-serif;
+    ">▶ Test Voice</button>
+  </div>
+
+  <!-- ── Now Serving ── -->
+  <div class="now-serving-section">
+    <p class="now-label">NOW SERVING</p>
+    <h1 class="big-token" id="currentToken">—</h1>
+    <p class="counter-info" id="counterInfo">Waiting for patients...</p>
+
+    <!-- Counter indicator dots -->
+    <div class="indicators-row">
+      <div class="counter-indicator idle" id="indicator-1"><span>C1</span></div>
+      <div class="counter-indicator idle" id="indicator-2"><span>C2</span></div>
+      <div class="counter-indicator idle" id="indicator-3"><span>C3</span></div>
+      <div class="counter-indicator idle" id="indicator-4"><span>C4</span></div>
+    </div>
+  </div>
+
+  <!-- ── All 4 Counters ── -->
+  <div class="counters-grid">
+    <div class="counter-box" id="box-1">
+      <p class="c-label">COUNTER 01</p>
+      <h2 class="c-token" id="c1-token">---</h2>
+      <p class="c-doctor" id="c1-doctor"></p>
+      <span class="c-dept" id="c1-dept"></span>
+      <p class="c-status idle" id="c1-status">Idle</p>
+    </div>
+    <div class="counter-box" id="box-2">
+      <p class="c-label">COUNTER 02</p>
+      <h2 class="c-token" id="c2-token">---</h2>
+      <p class="c-doctor" id="c2-doctor"></p>
+      <span class="c-dept" id="c2-dept"></span>
+      <p class="c-status idle" id="c2-status">Idle</p>
+    </div>
+    <div class="counter-box" id="box-3">
+      <p class="c-label">COUNTER 03</p>
+      <h2 class="c-token" id="c3-token">---</h2>
+      <p class="c-doctor" id="c3-doctor"></p>
+      <span class="c-dept" id="c3-dept"></span>
+      <p class="c-status idle" id="c3-status">Idle</p>
+    </div>
+    <div class="counter-box" id="box-4">
+      <p class="c-label">COUNTER 04</p>
+      <h2 class="c-token" id="c4-token">---</h2>
+      <p class="c-doctor" id="c4-doctor"></p>
+      <span class="c-dept" id="c4-dept"></span>
+      <p class="c-status idle" id="c4-status">Idle</p>
+    </div>
+  </div>
+
+  <!-- ── Voice Bar ── -->
+  <div class="voice-bar" id="voiceBar">
+    <span class="voice-icon">🔊</span>
+    <div class="voice-waves">
+      <div class="wave"></div>
+      <div class="wave"></div>
+      <div class="wave"></div>
+      <div class="wave"></div>
+      <div class="wave"></div>
+      <div class="wave"></div>
+    </div>
+    <span class="voice-text" id="voiceText">Voice announcement ready</span>
+  </div>
+
+  <!-- ── Queue Strip ── -->
+  <div class="queue-section">
+    <p class="queue-title">NEXT IN QUEUE</p>
+    <div class="queue-list" id="queueList">
+      <p class="queue-empty">Queue is empty</p>
+    </div>
+  </div>
+
+  <!-- ── Stats ── -->
+  <div class="stats-row">
+    <div class="stat-box">
+      <h2 id="statQueue">0</h2>
+      <p>In Queue</p>
+    </div>
+    <div class="stat-box">
+      <h2 id="statServing">0</h2>
+      <p>Being Served</p>
+    </div>
+    <div class="stat-box">
+      <h2 id="statServed">0</h2>
+      <p>Served Today</p>
+    </div>
+    <div class="stat-box">
+      <h2 id="statWait">0m</h2>
+      <p>Avg Wait</p>
+    </div>
+  </div>
+
+  <!-- <script src="http://localhost:5000/socket.io/socket.io.js"></script> -->
+   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="js/display.js"></script>
+</body>
+</html>

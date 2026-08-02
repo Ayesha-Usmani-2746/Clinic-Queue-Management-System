@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediCare — Admin Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css"/>
+</head>
+<body>
+
+<div class="admin-page">
+
+  <!-- ── Header ── -->
+  <div class="admin-header">
+    <div class="header-brand">
+      <div class="brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Admin Panel</h1>
+        <p>MediCare Clinic — Queue Management</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <span class="admin-badge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span id="adminName">Admin</span>
+      </span>
+      <a href="index.html"   class="hdr-btn">Home</a>
+      <a href="display.html" class="hdr-btn">Display</a>
+      <button id="logoutBtn" class="hdr-btn logout">Logout</button>
+    </div>
+  </div>
+
+  <!-- ── Stats ── -->
+  <div class="stats-grid">
+    <div class="stat-card blue">
+      <div class="stat-num" id="statInQueue">0</div>
+      <div class="stat-label">In Queue</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-num" id="statServed">0</div>
+      <div class="stat-label">Served Today</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-num" id="statWait">0m</div>
+      <div class="stat-label">Avg Wait</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-num" id="statCounters">0</div>
+      <div class="stat-label">Active Counters</div>
+    </div>
+  </div>
+
+  <!-- ── Tabs ── -->
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-queue"        onclick="switchAdminTab('queue')">Queue</button>
+    <button class="tab-btn"        id="tab-appointments" onclick="switchAdminTab('appointments')">Appointments</button>
+    <button class="tab-btn"        id="tab-patients"     onclick="switchAdminTab('patients')">Patients</button>
+    <button class="tab-btn"        id="tab-doctors"      onclick="switchAdminTab('doctors')">Doctors</button>
+  </div>
+
+  <!-- ══ QUEUE SECTION ══ -->
+  <div class="section" id="section-queue">
+
+    <div class="controls-bar">
+      <div class="control-group">
+        <label>Counter</label>
+        <select id="counterSelect"></select>
+      </div>
+      <button class="btn-call"  id="callNextBtn">Call Next Token</button>
+      <button class="btn-reset" id="resetBtn">Reset Queue</button>
+    </div>
+
+    <div class="serving-banner">
+      <div style="flex:1;">
+        <div class="serving-lbl">CURRENTLY SERVING
+          <span style="font-size:11px;font-weight:400;opacity:0.7;margin-left:8px;">
+            (rotates every 3s when multiple counters active)
+          </span>
+        </div>
+        <div class="serving-token" id="servingToken">---</div>
+        <div class="serving-sub"   id="servingInfo">No token called yet</div>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <span id="adot-1" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);transition:all .3s;">C1</span>
+          <span id="adot-2" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);transition:all .3s;">C2</span>
+          <span id="adot-3" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);transition:all .3s;">C3</span>
+          <span id="adot-4" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);transition:all .3s;">C4</span>
+        </div>
+      </div>
+      <button class="btn-done" id="markDoneBtn">Mark Done</button>
+    </div>
+
+    <!-- Daily Stats -->
+    <div class="panel" style="margin-top:16px;padding:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div>
+          <h3 style="margin:0;font-size:15px;font-weight:700;color:#1e293b;">Daily Patient Volume</h3>
+          <p style="margin:2px 0 0;font-size:12px;color:#94a3b8;">Tokens marked done per day</p>
+        </div>
+        <button class="btn-sm" onclick="loadDailyStats()">Refresh</button>
+      </div>
+      <div id="dailyStatsContainer" style="min-height:80px;">
+        Loading...
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hdr">
+        <h3>Queue List</h3>
+        <button class="btn-sm" id="refreshBtn">Refresh</button>
+      </div>
+      <div class="tbl-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Token</th><th>Patient</th><th>Dept</th>
+              <th>Counter</th><th>Time</th><th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="queueTableBody">
+            <tr><td colspan="7" class="empty-cell">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ APPOINTMENTS SECTION ══ -->
+  <div class="section" id="section-appointments" style="display:none">
+    <div class="panel">
+      <div class="panel-hdr">
+        <h3>All Appointments</h3>
+        <button class="btn-sm" onclick="loadAppointments()">Refresh</button>
+      </div>
+      <div class="tbl-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Token</th><th>Patient</th><th>Dept</th>
+              <th>Date</th><th>Time</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="apptTableBody">
+            <tr><td colspan="6" class="empty-cell">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PATIENTS SECTION ══ -->
+  <div class="section" id="section-patients" style="display:none">
+    <div class="panel">
+      <div class="panel-hdr">
+        <h3>Patient Records</h3>
+        <button class="btn-sm" onclick="loadPatients()">Refresh</button>
+      </div>
+      <div class="tbl-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name</th><th>Phone</th><th>Email</th>
+              <th>Age</th><th>Gender</th><th>Registered</th>
+            </tr>
+          </thead>
+          <tbody id="patientTableBody">
+            <tr><td colspan="6" class="empty-cell">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ DOCTORS SECTION ══ -->
+  <div class="section" id="section-doctors" style="display:none">
+
+    <div class="panel add-form">
+      <h3>Add / Update Doctor</h3>
+      <div class="form-grid">
+        <div class="fg">
+          <label>Counter Number</label>
+          <select id="docCounter">
+            <option value="1">Counter 01</option>
+            <option value="2">Counter 02</option>
+            <option value="3">Counter 03</option>
+            <option value="4">Counter 04</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Doctor Name</label>
+          <input type="text" id="docName" placeholder="e.g. Dr. Ahmed Khan"/>
+        </div>
+        <div class="fg">
+          <label>Department</label>
+          <select id="docDept">
+            <option value="General OPD">General OPD</option>
+            <option value="Dental">Dental</option>
+            <option value="ENT">ENT</option>
+            <option value="Cardiology">Cardiology</option>
+            <option value="Pediatrics">Pediatrics</option>
+            <option value="Orthopedics">Orthopedics</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Available Days</label>
+          <input type="text" id="docDays" placeholder="e.g. Mon-Fri" value="Mon-Sat"/>
+        </div>
+        <div class="fg">
+          <label>Start Time</label>
+          <input type="time" id="docStart" value="09:00"/>
+        </div>
+        <div class="fg">
+          <label>End Time</label>
+          <input type="time" id="docEnd" value="17:00"/>
+        </div>
+      </div>
+      <button class="btn-call" id="saveDoctorBtn" style="margin-top:16px;width:auto;padding:10px 28px;">
+        Save Doctor
+      </button>
+      <span id="docMsg" style="margin-left:12px;font-size:13px;color:#16a34a;"></span>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hdr">
+        <h3>Current Doctors</h3>
+        <button class="btn-sm" onclick="loadDoctors()">Refresh</button>
+      </div>
+      <div class="tbl-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Counter</th><th>Doctor</th><th>Department</th>
+              <th>Days</th><th>Hours</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="doctorsTableBody">
+            <tr><td colspan="7" class="empty-cell">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
